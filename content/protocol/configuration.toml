@@ -1,0 +1,9 @@
+title = "Protocol Guide"
+toc_depth = 2
+
+files = [
+"introduction.md",
+"cryptography.md",
+"discovery.md",
+"peer_connections.md",
+]

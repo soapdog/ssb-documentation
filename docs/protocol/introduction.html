@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="" data-theme="light">
+<head>
+  <meta name="company" content="appli" />
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>introduction</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="/simple.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<main class="container">
+<aside>
+<div class="logo">
+  <img src="/icon96.png">
+</div>
+<nav id="TOC" role="doc-toc">
+<ul>
+<h1 class="toc-title">Protocol Guide</h1>
+<li><a class="toc-item" href="/protocol/introduction.html#introduction" id="toc-introduction">Introduction</a></li>
+<li><a class="toc-item" href="/protocol/cryptography.html#cryptography" id="toc-cryptography">Cryptography</a>
+<ul>
+<li><a class="toc-item" href="/protocol/cryptography.html#keys-and-identities" id="toc-keys-and-identities">Keys and
+identities</a></li>
+<li><a class="toc-item" href="/protocol/cryptography.html#cryptographic-primitives"
+id="toc-cryptographic-primitives">Cryptographic primitives</a></li>
+</ul></li>
+<li><a class="toc-item" href="/protocol/discovery.html#discovery" id="toc-discovery">Discovery</a>
+<ul>
+<li><a class="toc-item" href="/protocol/discovery.html#local-network" id="toc-local-network">Local
+network</a></li>
+<li><a class="toc-item" href="/protocol/discovery.html#invite-code" id="toc-invite-code">Invite code</a></li>
+<li><a class="toc-item" href="/protocol/discovery.html#pub-message" id="toc-pub-message">Pub message</a></li>
+</ul></li>
+<li><a class="toc-item" href="/protocol/peer_connections.html#peer-connections" id="toc-peer-connections">Peer
+connections</a>
+<ul>
+<li><a class="toc-item" href="/protocol/peer_connections.html#handshake" id="toc-handshake">Handshake</a></li>
+</ul></li>
+<h1 class="toc-title">Message Types</h1>
+<li><a class="toc-item" href="/message_types/index.html#message-types" id="toc-message-types">Message
+Types</a></li>
+<li><a class="toc-item" href="/message_types/about.html#about-messages" id="toc-about-messages"><code>about</code>
+messages</a></li>
+<li><a class="toc-item" href="/message_types/blog.html#blog-messages" id="toc-blog-messages"><code>blog</code>
+messages</a></li>
+<li><a class="toc-item" href="/message_types/bookclub.html#bookclub-message"
+id="toc-bookclub-message"><code>bookclub</code> message</a></li>
+<li><a class="toc-item" href="/message_types/bookclubUpdate.html#bookclubupdate-message"
+id="toc-bookclubupdate-message"><code>bookclubUpdate</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/channel.html#channel-message"
+id="toc-channel-message"><code>channel</code> message</a></li>
+<li><a class="toc-item" href="/message_types/contact.html#contact-message"
+id="toc-contact-message"><code>contact</code> message</a></li>
+<li><a class="toc-item" href="/message_types/gathering.html#gathering-message"
+id="toc-gathering-message"><code>gathering</code> message</a></li>
+<li><a class="toc-item" href="/message_types/more-info.html#more-info-message"
+id="toc-more-info-message"><code>more-info</code> message</a></li>
+<li><a class="toc-item" href="/message_types/post.html#post-message" id="toc-post-message"><code>post</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/private.html#private-messages" id="toc-private-messages">Private
+messages</a></li>
+<li><a class="toc-item" href="/message_types/pub.html#pub-message" id="toc-pub-message"><code>pub</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/vote.html#vote-message" id="toc-vote-message"><code>vote</code>
+message</a></li>
+</nav>
+<div class="aside-footer">
+<p>Build date: 2022-10-03</p>
+</div>
+</aside>
+<article>
+<h1 id="introduction">Introduction</h1>
+<p><a href="https://www.scuttlebutt.nz/">Scuttlebutt</a> is a protocol
+for building decentralized applications that work well offline and that
+no one person can control. Because there is no central server,
+Scuttlebutt clients connect to their peers to exchange information. This
+guide describes the protocols used to communicate within the Scuttlebutt
+network.</p>
+<p>Scuttlebutt is a flexible protocol, capable of supporting many
+different types of applications. One of its first applications was as a
+social network. This guide has a slight focus on how to use Scuttlebutt
+for social networking, but many of the explanations will still be useful
+if want to use it for something completely different, or are just
+curious how it works.</p>
+</article>
+</main>
+</body>
+</html>

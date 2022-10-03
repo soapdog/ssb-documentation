@@ -1,0 +1,12 @@
+folderOrder = [
+"protocol",
+"message_types",
+"development/js",
+"development/rust",
+"development/go",
+"software/patchwork",
+"software/manyverse",
+"software/planetary",
+"software/patchfoo",
+"software/patchfox",
+]

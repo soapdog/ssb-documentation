@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="" data-theme="light">
+<head>
+  <meta name="company" content="appli" />
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Message Types</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="/simple.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<main class="container">
+<aside>
+<div class="logo">
+  <img src="/icon96.png">
+</div>
+<nav id="TOC" role="doc-toc">
+<ul>
+<h1 class="toc-title">Protocol Guide</h1>
+<li><a class="toc-item" href="/protocol/introduction.html#introduction" id="toc-introduction">Introduction</a></li>
+<li><a class="toc-item" href="/protocol/cryptography.html#cryptography" id="toc-cryptography">Cryptography</a>
+<ul>
+<li><a class="toc-item" href="/protocol/cryptography.html#keys-and-identities" id="toc-keys-and-identities">Keys and
+identities</a></li>
+<li><a class="toc-item" href="/protocol/cryptography.html#cryptographic-primitives"
+id="toc-cryptographic-primitives">Cryptographic primitives</a></li>
+</ul></li>
+<li><a class="toc-item" href="/protocol/discovery.html#discovery" id="toc-discovery">Discovery</a>
+<ul>
+<li><a class="toc-item" href="/protocol/discovery.html#local-network" id="toc-local-network">Local
+network</a></li>
+<li><a class="toc-item" href="/protocol/discovery.html#invite-code" id="toc-invite-code">Invite code</a></li>
+<li><a class="toc-item" href="/protocol/discovery.html#pub-message" id="toc-pub-message">Pub message</a></li>
+</ul></li>
+<li><a class="toc-item" href="/protocol/peer_connections.html#peer-connections" id="toc-peer-connections">Peer
+connections</a>
+<ul>
+<li><a class="toc-item" href="/protocol/peer_connections.html#handshake" id="toc-handshake">Handshake</a></li>
+</ul></li>
+<h1 class="toc-title">Message Types</h1>
+<li><a class="toc-item" href="/message_types/index.html#message-types" id="toc-message-types">Message
+Types</a></li>
+<li><a class="toc-item" href="/message_types/about.html#about-messages" id="toc-about-messages"><code>about</code>
+messages</a></li>
+<li><a class="toc-item" href="/message_types/blog.html#blog-messages" id="toc-blog-messages"><code>blog</code>
+messages</a></li>
+<li><a class="toc-item" href="/message_types/bookclub.html#bookclub-message"
+id="toc-bookclub-message"><code>bookclub</code> message</a></li>
+<li><a class="toc-item" href="/message_types/bookclubUpdate.html#bookclubupdate-message"
+id="toc-bookclubupdate-message"><code>bookclubUpdate</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/channel.html#channel-message"
+id="toc-channel-message"><code>channel</code> message</a></li>
+<li><a class="toc-item" href="/message_types/contact.html#contact-message"
+id="toc-contact-message"><code>contact</code> message</a></li>
+<li><a class="toc-item" href="/message_types/gathering.html#gathering-message"
+id="toc-gathering-message"><code>gathering</code> message</a></li>
+<li><a class="toc-item" href="/message_types/more-info.html#more-info-message"
+id="toc-more-info-message"><code>more-info</code> message</a></li>
+<li><a class="toc-item" href="/message_types/post.html#post-message" id="toc-post-message"><code>post</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/private.html#private-messages" id="toc-private-messages">Private
+messages</a></li>
+<li><a class="toc-item" href="/message_types/pub.html#pub-message" id="toc-pub-message"><code>pub</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/vote.html#vote-message" id="toc-vote-message"><code>vote</code>
+message</a></li>
+</nav>
+<div class="aside-footer">
+<p>Build date: 2022-10-03</p>
+</div>
+</aside>
+<article>
+<h1 id="message-types">Message Types</h1>
+<p>A <a
+href="https://ssbc.github.io/scuttlebutt-protocol-guide/#feeds">Scuttlebutt
+feed</a> is a list of all the messages posted by a particular identity.
+When a user writes a message in a Scuttlebutt client and posts it, that
+message is put onto the end of their feed.</p>
+<p>Each <a
+href="https://ssbc.github.io/scuttlebutt-protocol-guide/#message-format">message</a>
+has its own <em>type</em> which identifies what kind of message it is.
+There are messages related to your social graph, private messages, chess
+playing messages, etc. People can define their own message types
+provided they follow <a
+href="https://ssbc.github.io/scuttlebutt-protocol-guide/#message-format">the
+message format mentioned above</a>.</p>
+<h2 id="custom-types">Custom Types</h2>
+<p>Message schemas are interpretted according to the <code>type</code>
+property, as demonstrated in the other pages of this section.</p>
+<p>There is no restriction on which types applications use. A type
+simply must be a string between 3 and 52 characters long. You are free
+to create new types, with their own schemas, as you need them.</p>
+<p>Likewise, there is no restriction on message schemas, so long as the
+content is an object, and the total message size (including headers) is
+less than 8kb.</p>
+<h2 id="interoperation">Interoperation</h2>
+<p>Applications should interpret messages “defensively.” There’s nothing
+enforcing a schema, so (as with any input) applications must be prepared
+for malformed content objects in messages.</p>
+<p>Applications should endeavor to interpret messages the same way.
+Otherwise, they won’t be able to interoperate, and may introduce
+unexpected behaviors.</p>
+<p>There is no official mechanism for making sure message-types
+interoperate, except for the documentation which you’re reading here. As
+it becomes clear that new types are coming into common use, we’ll add
+them to this site.</p>
+<ul>
+<li><a href="/message_types/about">about</a></li>
+<li><a href="/message_types/blog">blog</a></li>
+<li><a href="/message_types/bookclub">bookclub</a></li>
+<li><a href="/message_types/bookclubUpdate">bookclubUpdate</a></li>
+<li><a href="/message_types/channel">channel</a></li>
+<li><a href="/message_types/contact">contact</a></li>
+<li><a href="/message_types/gathering">gathering</a></li>
+<li><a href="/message_types/more-info">more-info</a></li>
+<li><a href="/message_types/post">post</a></li>
+<li><a href="/message_types/private">private</a></li>
+<li><a href="/message_types/pub">pub</a></li>
+<li><a href="/message_types/vote">vote</a></li>
+</ul>
+</article>
+</main>
+</body>
+</html>

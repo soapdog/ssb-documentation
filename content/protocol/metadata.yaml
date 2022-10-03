@@ -1,0 +1,9 @@
+---
+title: Secure Scuttlebutt Protocol Guide
+license: Public Domain
+spine:
+	- introduction.md
+	- cryptography.md
+	- discovery.md
+	- peer_connections.md
+---

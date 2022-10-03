@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="" data-theme="light">
+<head>
+  <meta name="company" content="appli" />
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>peer_connections</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="/simple.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<main class="container">
+<aside>
+<div class="logo">
+  <img src="/icon96.png">
+</div>
+<nav id="TOC" role="doc-toc">
+<ul>
+<h1 class="toc-title">Protocol Guide</h1>
+<li><a class="toc-item" href="/protocol/introduction.html#introduction" id="toc-introduction">Introduction</a></li>
+<li><a class="toc-item" href="/protocol/cryptography.html#cryptography" id="toc-cryptography">Cryptography</a>
+<ul>
+<li><a class="toc-item" href="/protocol/cryptography.html#keys-and-identities" id="toc-keys-and-identities">Keys and
+identities</a></li>
+<li><a class="toc-item" href="/protocol/cryptography.html#cryptographic-primitives"
+id="toc-cryptographic-primitives">Cryptographic primitives</a></li>
+</ul></li>
+<li><a class="toc-item" href="/protocol/discovery.html#discovery" id="toc-discovery">Discovery</a>
+<ul>
+<li><a class="toc-item" href="/protocol/discovery.html#local-network" id="toc-local-network">Local
+network</a></li>
+<li><a class="toc-item" href="/protocol/discovery.html#invite-code" id="toc-invite-code">Invite code</a></li>
+<li><a class="toc-item" href="/protocol/discovery.html#pub-message" id="toc-pub-message">Pub message</a></li>
+</ul></li>
+<li><a class="toc-item" href="/protocol/peer_connections.html#peer-connections" id="toc-peer-connections">Peer
+connections</a>
+<ul>
+<li><a class="toc-item" href="/protocol/peer_connections.html#handshake" id="toc-handshake">Handshake</a></li>
+</ul></li>
+<h1 class="toc-title">Message Types</h1>
+<li><a class="toc-item" href="/message_types/index.html#message-types" id="toc-message-types">Message
+Types</a></li>
+<li><a class="toc-item" href="/message_types/about.html#about-messages" id="toc-about-messages"><code>about</code>
+messages</a></li>
+<li><a class="toc-item" href="/message_types/blog.html#blog-messages" id="toc-blog-messages"><code>blog</code>
+messages</a></li>
+<li><a class="toc-item" href="/message_types/bookclub.html#bookclub-message"
+id="toc-bookclub-message"><code>bookclub</code> message</a></li>
+<li><a class="toc-item" href="/message_types/bookclubUpdate.html#bookclubupdate-message"
+id="toc-bookclubupdate-message"><code>bookclubUpdate</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/channel.html#channel-message"
+id="toc-channel-message"><code>channel</code> message</a></li>
+<li><a class="toc-item" href="/message_types/contact.html#contact-message"
+id="toc-contact-message"><code>contact</code> message</a></li>
+<li><a class="toc-item" href="/message_types/gathering.html#gathering-message"
+id="toc-gathering-message"><code>gathering</code> message</a></li>
+<li><a class="toc-item" href="/message_types/more-info.html#more-info-message"
+id="toc-more-info-message"><code>more-info</code> message</a></li>
+<li><a class="toc-item" href="/message_types/post.html#post-message" id="toc-post-message"><code>post</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/private.html#private-messages" id="toc-private-messages">Private
+messages</a></li>
+<li><a class="toc-item" href="/message_types/pub.html#pub-message" id="toc-pub-message"><code>pub</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/vote.html#vote-message" id="toc-vote-message"><code>vote</code>
+message</a></li>
+</nav>
+<div class="aside-footer">
+<p>Build date: 2022-10-03</p>
+</div>
+</aside>
+<article>
+<h1 id="peer-connections">Peer connections</h1>
+<p>Once a Scuttlebutt client has discovered the IP address, port number
+and public key of a peer they can connect via TCP to ask for updates and
+exchange messages.</p>
+<h2 id="handshake">Handshake</h2>
+<p>The connection begins with a 4-step handshake to authenticate each
+peer and set up an encrypted channel.</p>
+<figure>
+<img src="img/message_flow.png"
+alt="Message 1: Client hello (sent by the client). Message 2: Server hello. Message 3: Client authenticate. Message 4: Server accept" />
+<figcaption aria-hidden="true">Message 1: Client hello (sent by the
+client). Message 2: Server hello. Message 3: Client authenticate.
+Message 4: Server accept</figcaption>
+</figure>
+<blockquote>
+<h3 id="implementations"><img src="img/impl16.png" />
+Implementations</h3>
+<p><strong>JS:</strong></p>
+<ul>
+<li><a
+href="https://github.com/auditdrivencrypto/secret-handshake/blob/master/protocol.js">protocol.js</a></li>
+<li><a
+href="https://github.com/auditdrivencrypto/secret-handshake/blob/master/crypto.js">crypto.js</a></li>
+</ul>
+<p><strong>Python:</strong></p>
+<ul>
+<li><a
+href="https://github.com/pferreir/PySecretHandshake/blob/master/secret_handshake/crypto.py">crypto.py</a></li>
+</ul>
+<p><strong>Go:</strong></p>
+<ul>
+<li><a
+href="https://github.com/cryptoscope/secretstream/blob/ad7542b0cbda422a1ea3de7efa62a514672a2c88/secrethandshake/state.go">state.go</a></li>
+<li><a
+href="https://github.com/cryptoscope/secretstream/blob/ad7542b0cbda422a1ea3de7efa62a514672a2c88/secrethandshake/conn.go">conn.go</a></li>
+</ul>
+<p><strong>C:</strong></p>
+<ul>
+<li><a
+href="https://github.com/AljoschaMeyer/shs1-c/blob/master/src/shs1.c">shs1.c</a></li>
+<li><a
+href="https://git.scuttlebot.io/%25133ulDgs%2FoC1DXjoK04vDFy6DgVBB%2FZok15YJmuhD5Q%3D.sha256/blob/fd953a1e72b4b16e6e5a74bcf2f893dbf1407ce4/sbotc.c">sbotc.c</a></li>
+</ul>
+<p><strong>Java:</strong></p>
+<ul>
+<li><a
+href="https://github.com/apache/incubator-tuweni/blob/master/scuttlebutt-handshake/src/main/java/org/apache/tuweni/scuttlebutt/handshake/SecureScuttlebuttHandshakeClient.java">HandshakeClient</a></li>
+<li><a
+href="https://github.com/apache/incubator-tuweni/blob/master/scuttlebutt-handshake/src/main/java/org/apache/tuweni/scuttlebutt/handshake/SecureScuttlebuttHandshakeServer.java">HandshakeServer</a></li>
+</ul>
+</blockquote>
+<p>The handshake uses the <a
+href="https://dominictarr.github.io/secret-handshake-paper/shs.pdf">Secret
+Handshake key exchange</a> which is designed to have these security
+properties:</p>
+<ul>
+<li>After a successful handshake the peers have verified each other’s
+public keys.</li>
+<li>The handshake produces a shared secret that can be used with a bulk
+encryption cypher for exchanging further messages.</li>
+<li>The client must know the server’s public key before connecting. The
+server learns the client’s public key during the handshake.</li>
+<li>Once the client has proven their identity the server can decide they
+don’t want to talk to this client and disconnect without confirming
+their own identity.</li>
+<li>A man-in-the-middle cannot learn the public key of either peer.</li>
+<li>Both peers need to know a key that represents the particular
+Scuttlebutt network they wish to connect to, however a man-in-the-middle
+can’t learn this key from the handshake. If the handshake succeeds then
+both ends have confirmed that they wish to use the same network.</li>
+<li>Past handshakes cannot be replayed. Attempting to replay a handshake
+will not allow an attacker to discover or confirm guesses about the
+participants’ public keys.</li>
+<li>Handshakes provide forward secrecy. Recording a user’s network
+traffic and then later stealing their secret key will not allow an
+attacker to decrypt their past handshakes.</li>
+</ul>
+<blockquote>
+<p><strong>Client</strong> is the computer initiating the TCP connection
+and <strong>server</strong> is the computer receiving it. Once the
+handshake is complete this distinction goes away.</p>
+</blockquote>
+<h3 id="starting-keys">Starting keys</h3>
+<p>Upon starting the handshake, the client and server know these
+keys:</p>
+<figure>
+<img src="img/starting_keys.png"
+alt="Both the client and servers know: their own long term key pair, their own ephemeral key pair, and the network’s (private) identifier. Additionally, the client knows the server’s long term public key." />
+<figcaption aria-hidden="true">Both the client and servers know: their
+own long term key pair, their own ephemeral key pair, and the network’s
+(private) identifier. Additionally, the client knows the server’s long
+term public key.</figcaption>
+</figure>
+<h4 id="client-hello">1. Client hello</h4>
+<figure>
+<img src="img/client_hello.png"
+alt="The client sends their own ephemeral public key, hmac-authenticated using the network identifier" />
+<figcaption aria-hidden="true">The client sends their own ephemeral
+public key, hmac-authenticated using the network identifier</figcaption>
+</figure>
+<h4 id="client-sends-64-bytes">Client sends (64 bytes)</h4>
+<pre><code>concat(
+  nacl_auth(
+    msg: client_ephemeral_pk,
+    key: network_identifier
+  ),
+  client_ephemeral_pk
+)</code></pre>
+<h4 id="server-verifies">Server verifies</h4>
+<pre><code>assert(length(msg1) == 64)
+
+client_hmac = first_32_bytes(msg1)
+client_ephemeral_pk = last_32_bytes(msg1)
+
+assert_nacl_auth_verify(
+  authenticator: client_hmac,
+  msg: client_ephemeral_pk,
+  key: network_identifier
+)</code></pre>
+<p>First the client sends their <img src="img/key_little_a_public.png"
+alt="public" /> generated ephemeral key. Also included is an hmac that
+indicates the client wishes to use their key with this specific instance
+of the Scuttlebutt network.</p>
+<p>The <img src="img/key_big_n.png" /> network identifier is a fixed
+key. On the main Scuttlebutt network it is the following 32-byte
+sequence:</p>
+<table>
+<tbody>
+<tr class="odd">
+<td>d4</td>
+<td>a1</td>
+<td>cb</td>
+<td>88</td>
+<td>a6</td>
+<td>6f</td>
+<td>02</td>
+<td>f8</td>
+<td>db</td>
+<td>63</td>
+<td>5c</td>
+<td>e2</td>
+<td>64</td>
+<td>41</td>
+<td>cc</td>
+<td>5d</td>
+</tr>
+<tr class="even">
+<td>ac</td>
+<td>1b</td>
+<td>08</td>
+<td>42</td>
+<td>0c</td>
+<td>ea</td>
+<td>ac</td>
+<td>23</td>
+<td>08</td>
+<td>39</td>
+<td>b7</td>
+<td>55</td>
+<td>84</td>
+<td>5a</td>
+<td>9f</td>
+<td>fb</td>
+</tr>
+</tbody>
+</table>
+<p>Changing the key allows separate networks to be created, for example
+private networks or testnets. An eavesdropper cannot extract the network
+identifier directly from what is sent over the wire, although they could
+confirm a guess that it is the main Scuttlebutt network because that
+identifier is publicly known.</p>
+<p>The server stores the client’s ephemeral public key and uses the hmac
+to verify that the client is using the same network identifier.</p>
+<blockquote>
+<p><strong>hmac</strong> is a function that allows verifying that a
+message came from someone who knows the same secret key as you. In this
+case the network identifier is used as the secret key.</p>
+<p>Both the message creator and verifier have to know the same message
+and secret key for the verification to succeed, but the secret key is
+not revealed to an eavesdropper.</p>
+<p>Throughout the protocol, all instances of hmac use HMAC-SHA-512-256
+(which is the first 256 bits of HMAC-SHA-512).</p>
+</blockquote>
+<h4 id="server-hello">2. Server hello</h4>
+<figure>
+<img src="img/server_hello.png"
+alt="The server sends their own ephemeral public key, hmac-authenticated using the network identifier" />
+<figcaption aria-hidden="true">The server sends their own ephemeral
+public key, hmac-authenticated using the network identifier</figcaption>
+</figure>
+<h5 id="client-verifies">Client verifies</h5>
+<h5 id="server-sends-64-bytes">Server sends (64 bytes)</h5>
+<pre><code>assert(length(msg2) == 64)
+
+server_hmac = first_32_bytes(msg2)
+server_ephemeral_pk = last_32_bytes(msg2)
+
+assert_nacl_auth_verify(
+  authenticator: server_hmac,
+  msg: server_ephemeral_pk,
+  key: network_identifier
+)
+
+concat(
+  nacl_auth(
+    msg: server_ephemeral_pk,
+    key: network_identifier
+  ),
+  server_ephemeral_pk
+)</code></pre>
+<p>The server responds with their own <img
+src="img/key_little_b_public.png" alt="public" /> ephemeral public key
+and hmac. The client stores the key and verifies that they are also
+using the same network identifier.</p>
+<h4 id="shared-secret-derivation">Shared secret derivation</h4>
+<figure>
+<img src="img/shared_secret_derivation_1.png"
+alt="Each derivation uses one public key (their peer’s) and one secret key (their own). The resultting shared secrets are identical between server and client." />
+<figcaption aria-hidden="true">Each derivation uses one public key
+(their peer’s) and one secret key (their own). The resultting shared
+secrets are identical between server and client.</figcaption>
+</figure>
+<h5 id="client-computes">Client computes</h5>
+<h5 id="server-computes">Server computes</h5>
+<pre><code>shared_secret_ab = nacl_scalarmult(
+  client_ephemeral_sk,
+  server_ephemeral_pk
+)
+
+shared_secret_aB = nacl_scalarmult(
+  client_ephemeral_sk,
+  pk_to_curve25519(server_longterm_pk)
+)
+
+shared_secret_ab = nacl_scalarmult(
+  server_ephemeral_sk,
+  client_ephemeral_pk
+)
+
+shared_secret_aB = nacl_scalarmult(
+  sk_to_curve25519(server_longterm_sk),
+  client_ephemeral_pk
+)</code></pre>
+<p>Now that ephemeral keys have been exchanged, both ends use them to
+derive a shared secret <img src="img/key_little_a_little_b.png" /> using
+scalar multiplication.</p>
+<p>The client and server each combine their own ephemeral secret key
+with the other’s ephemeral public key to produce the same shared secret
+on both ends. An eavesdropper doesn’t know either secret key so they
+can’t generate the shared secret. A man-in-the-middle could swap out the
+ephemeral keys in Messages 1 and 2 for their own keys, so the shared
+secret <img src="img/key_little_a_little_b.png" /> alone is not enough
+for the client and server to know that they are talking to each other
+and not a man-in-the-middle.</p>
+<p>Because the client already knows the <img
+src="img/key_big_b_public.png" /> server’s long term public key, both
+ends derive a second secret <img src="img/key_little_a_big_b.png"
+alt="using the client’s ephemeral key pair (either the public or the secret key) and the server’s permanent key pair (respectively either the secret or private key)" />
+that will allow the client to send a message that only the real server
+can read and not a man-in-the-middle.</p>
+<p><strong>Scalar multiplication</strong> is a function for deriving
+shared secrets from a pair of secret and public Curve25519 keys.</p>
+<p>The order of arguments matters. In the NaCl API the secret key is
+provided first.</p>
+<p>Note that long term keys are Ed25519 and must first be converted to
+Curve25519.</p>
+<h4 id="client-authenticate">3. Client authenticate</h4>
+<figure>
+<img src="img/client_authenticate.png"
+alt="The client computes a detached signature of the network identifier, the server’s long-term public key, and a hash of the shared secret; signed with its permanent secret key. They add their permanent public key, and encrypt both so that they can only be opened by someone knowing the network identifier and both shared secrets; then send the cyphertext to the server." />
+<figcaption aria-hidden="true">The client computes a detached signature
+of the network identifier, the server’s long-term public key, and a hash
+of the shared secret; signed with its permanent secret key. They add
+their permanent public key, and encrypt both so that they can only be
+opened by someone knowing the network identifier and both shared
+secrets; then send the cyphertext to the server.</figcaption>
+</figure>
+<h5 id="client-computes-1">Client computes</h5>
+<h5 id="server-verifies-1">Server verifies</h5>
+<pre><code>detached_signature_A = nacl_sign_detached(
+  msg: concat(
+    network_identifier,
+    server_longterm_pk,
+    sha256(shared_secret_ab)
+  ),
+  key: client_longterm_sk
+)
+
+msg3_plaintext = assert_nacl_secretbox_open(
+  ciphertext: msg3,
+  nonce: 24_bytes_of_zeros,
+  key: sha256(
+    concat(
+      network_identifier,
+      shared_secret_ab,
+      shared_secret_aB
+    )
+  )
+)
+
+assert(length(msg3_plaintext) == 96)
+
+detached_signature_A = first_64_bytes(msg3_plaintext)
+client_longterm_pk = last_32_bytes(msg3_plaintext)
+
+assert_nacl_sign_verify_detached(
+  sig: detached_signature_A,
+  msg: concat(
+    network_identifier,
+    server_longterm_pk,
+    sha256(shared_secret_ab)
+  ),
+  key: client_longterm_pk
+)</code></pre>
+<h5 id="client-sends-112-bytes">Client sends (112 bytes)</h5>
+<pre><code>nacl_secret_box(
+  msg: concat(
+    detached_signature_A,
+    client_longterm_pk
+  ),
+  nonce: 24_bytes_of_zeros,
+  key: sha256(
+    concat(
+      network_identifier,
+      shared_secret_ab,
+      shared_secret_aB
+    )
+  )
+)</code></pre>
+<p>The client reveals their identity to the server by sending their <img
+src="img/key_big_a_public.png" /> long term public key. The client also
+makes a signature using their <img src="img/key_big_a_secret.png" />
+long term secret key. By signing the keys used earlier in the handshake
+the client proves their identity and confirms that they do indeed wish
+to be part of this handshake.</p>
+<p>The client’s message is enclosed in a secret box to ensure that only
+the server can read it. Upon receiving it, the server opens the box,
+stores the client’s long term public key and verifies the signature.</p>
+<p>An all-zero nonce is used for the secret box. The secret box
+construction requires that all secret boxes using a particular key must
+use different nonces. It’s important to get this detail right because
+reusing a nonce will allow an attacker to recover the key and encrypt or
+decrypt any secret boxes using that key. Using a zero nonce is allowed
+here because this is the only secret box that ever uses the key
+sha256(concat( <img src="img/key_big_n.png" />, <img
+src="img/key_little_a_little_b.png" />, <img
+src="img/key_little_a_big_b.png" />)).</p>
+<p><strong>Detached signatures</strong> do not contain a copy of the
+message that was signed, only a tag that allows verifying the signature
+if you already know the message.</p>
+<p>Here it is okay because the server knows all the information needed
+to reconstruct the message that the client signed.</p>
+<h4 id="shared-secret-derivation-1">Shared secret derivation</h4>
+<figure>
+<img src="img/shared_secret_derivation_2.png"
+alt="The client computes a new shared secret from their permanent secret key and the server’s ephemeral public key. The server computes the same shared secret from the client’s permanent public key and their own ephemeral secret key." />
+<figcaption aria-hidden="true">The client computes a new shared secret
+from their permanent secret key and the server’s ephemeral public key.
+The server computes the same shared secret from the client’s permanent
+public key and their own ephemeral secret key.</figcaption>
+</figure>
+<h5 id="client-computes-2">Client computes</h5>
+<h5 id="server-computes-1">Server computes</h5>
+<pre><code>shared_secret_Ab = nacl_scalarmult(
+  sk_to_curve25519(client_longterm_sk),
+  server_ephemeral_pk
+)
+
+shared_secret_Ab = nacl_scalarmult(
+  server_ephemeral_sk,
+  pk_to_curve25519(client_longterm_pk)
+)</code></pre>
+<p>Now that the server knows the <img src="img/key_big_a_public.png" />
+client’s long term public key, another shared secret <img
+src="img/key_big_a_little_b.png" /> is derived by both ends. The server
+uses this shared secret to send a message that only the real client can
+read and not a man-in-the-middle.</p>
+<h4 id="server-accept">4. Server accept</h4>
+<figure>
+<img src="img/server_accept.png"
+alt="The server signs the network identifier, the previous detached signature, the client’s permanent secret key, and the hash of the first shared secret, with their permanent secret key, as a new detached signature. They encrypt it so that they can only be opened by someone knowing the network identifier and all three shared secrets; then send the cyphertext to the client." />
+<figcaption aria-hidden="true">The server signs the network identifier,
+the previous detached signature, the client’s permanent secret key, and
+the hash of the first shared secret, with their permanent secret key, as
+a new detached signature. They encrypt it so that they can only be
+opened by someone knowing the network identifier and all three shared
+secrets; then send the cyphertext to the client.</figcaption>
+</figure>
+<h5 id="client-verifies-1">Client verifies</h5>
+<h5 id="server-computes-2">Server computes</h5>
+<pre><code>detached_signature_B = assert_nacl_secretbox_open(
+  ciphertext: msg4,
+  nonce: 24_bytes_of_zeros,
+  key: sha256(
+    concat(
+      network_identifier,
+      shared_secret_ab,
+      shared_secret_aB,
+      shared_secret_Ab
+    )
+  )
+)
+
+assert_nacl_sign_verify_detached(
+  sig: detached_signature_B,
+  msg: concat(
+    network_identifier,
+    detached_signature_A,
+    client_longterm_pk,
+    sha256(shared_secret_ab)
+  ),
+  key: server_longterm_pk
+)
+
+detached_signature_B = nacl_sign_detached(
+  msg: concat(
+    network_identifier,
+    detached_signature_A,
+    client_longterm_pk,
+    sha256(shared_secret_ab)
+  ),
+  key: server_longterm_sk
+)</code></pre>
+<h5 id="server-sends-80-bytes">Server sends (80 bytes)</h5>
+<pre><code>nacl_secret_box(
+  msg: detached_signature_B,
+  nonce: 24_bytes_of_zeros,
+  key: sha256(
+    concat(
+      network_identifier,
+      shared_secret_ab,
+      shared_secret_aB,
+      shared_secret_Ab
+    )
+  )
+)</code></pre>
+<p>The server accepts the handshake by signing a message using
+their <img src="img/key_big_b_secret.png" /> long term secret key. It
+includes a copy of the client’s previous signature. The server’s
+signature is enclosed in a secret box using all of the shared
+secrets.</p>
+<p>Upon receiving it, the client opens the box and verifies the server’s
+signature.</p>
+<p>Similarly to the previous message, this secret box also uses an
+all-zero nonce because it is the only secret box that ever uses the key
+sha256(concat( <img src="img/key_big_n.png" />, <img
+src="img/key_little_a_little_b.png" />, <img
+src="img/key_little_a_big_b.png" />, <img
+src="img/key_big_a_little_b.png" />)).</p>
+<h4 id="handshake-complete">Handshake complete</h4>
+<p><img src="img/final_shared_secret.png" /></p>
+<p>At this point the handshake has succeeded. The client and server have
+proven their identities to each other.</p>
+<p>The shared secrets established during the handshake are used to set
+up a pair of box streams for securely exchanging further messages.</p>
+<h3 id="box-stream">Box stream</h3>
+<p>Box stream is the bulk encryption protocol used to exchange messages
+following the handshake until the connection ends. It is designed to
+protect messages from being read or modified by a man-in-the-middle.</p>
+<p>Each message in a box stream has a header and body. The header is
+always 34 bytes long and says how long the body will be.</p>
+<figure>
+<img src="img/box_stream_overview.png"
+alt="A stream is made of alternating headers (34 bytes) and bodies (1 to 4096 bytes); ending with a body followed by a 34-bytes ‘goodbye’ header" />
+<figcaption aria-hidden="true">A stream is made of alternating headers
+(34 bytes) and bodies (1 to 4096 bytes); ending with a body followed by
+a 34-bytes ‘goodbye’ header</figcaption>
+</figure>
+<h4 id="sending">Sending</h4>
+<p>Sending a message involves encrypting the body of the message and
+preparing a header for it. Two secret boxes are used; one to protect the
+header and another to protect the body.</p>
+<p><img src="img/impl.png" /></p>
+<h5 id="implementations-1">Implementations</h5>
+<p>JS</p>
+<p><a
+href="https://github.com/dominictarr/pull-box-stream/blob/master/index.js">pull-box-stream</a></p>
+<p>Py</p>
+<p><a
+href="https://github.com/pferreir/PySecretHandshake/blob/master/secret_handshake/boxstream.py">boxstream.py</a></p>
+<p>Go</p>
+<p><a
+href="https://github.com/cryptoscope/secretstream/blob/ad7542b0cbda422a1ea3de7efa62a514672a2c88/boxstream/box.go">box.go</a></p>
+<p><a
+href="https://github.com/cryptoscope/secretstream/blob/ad7542b0cbda422a1ea3de7efa62a514672a2c88/boxstream/unbox.go">unbox.go</a></p>
+<p>C</p>
+<p><a
+href="https://github.com/AljoschaMeyer/box-stream-c/blob/master/src/box-stream.c">box-stream.c</a></p>
+<p><a
+href="https://git.scuttlebot.io/%25133ulDgs%2FoC1DXjoK04vDFy6DgVBB%2FZok15YJmuhD5Q%3D.sha256/blob/fd953a1e72b4b16e6e5a74bcf2f893dbf1407ce4/sbotc.c">sbotc.c</a></p>
+<p>Java</p>
+<p><a
+href="https://github.com/apache/incubator-tuweni/blob/master/scuttlebutt-handshake/src/main/java/org/apache/tuweni/scuttlebutt/handshake/SecureScuttlebuttStream.java">Stream</a></p>
+<figure>
+<img src="img/box_stream_send.png"
+alt="The plaintext message body is enclosed in a secret box using the key and nonce shown below. Secret boxes put a 16-byte tag onto the front of messages so that tampering can be detected when the box is opened. This tag is sliced off the body and put inside the header. A temporary header is made of the body length (a two-bytes big-endian integer) and th previous tag. This temporary header is then encrypted too, including its own (16-bytes) authentication tag, producing a 16+2+16 bytes header." />
+<figcaption aria-hidden="true">The plaintext message body is enclosed in
+a secret box using the key and nonce shown below. Secret boxes put a
+16-byte tag onto the front of messages so that tampering can be detected
+when the box is opened. This tag is sliced off the body and put inside
+the header. A temporary header is made of the body length (a two-bytes
+big-endian integer) and th previous tag. This temporary header is then
+encrypted too, including its own (16-bytes) authentication tag,
+producing a 16+2+16 bytes header.</figcaption>
+</figure>
+<h4 id="receiving">Receiving</h4>
+<p>Receiving a message involves reading the header to find out how long
+the body is then reassembling and opening the body secret box.</p>
+<figure>
+<img src="img/box_stream_receive.png"
+alt="Read the first 34 bytes. This is the secret box containing the header. Open this box, extract the body length and body authentication tag. Read the number of bytes specified in the header. Join the body authentication tag and encrypted body back together, open it, and read the secret text." />
+<figcaption aria-hidden="true">Read the first 34 bytes. This is the
+secret box containing the header. Open this box, extract the body length
+and body authentication tag. Read the number of bytes specified in the
+header. Join the body authentication tag and encrypted body back
+together, open it, and read the secret text.</figcaption>
+</figure>
+<h4 id="goodbye">Goodbye</h4>
+<p>The stream ends with a special “goodbye” header. Because the goodbye
+header is authenticated it allows a receiver to tell the difference
+between the connection genuinely being finished and a man-in-the-middle
+forcibly resetting the underlying TCP connection.</p>
+<figure>
+<img src="img/box_stream_goodbye.png"
+alt="The ‘goodbye’ header is made of 18 bytes of zero, encrypted in a secret box (with a header authenticated tag like other headers)." />
+<figcaption aria-hidden="true">The ‘goodbye’ header is made of 18 bytes
+of zero, encrypted in a secret box (with a header authenticated tag like
+other headers).</figcaption>
+</figure>
+<p>When a receiver opens a header and finds that it contains all zeros
+then they will know that the connection is finished.</p>
+<h4 id="keys-and-nonces">Keys and nonces</h4>
+<p>Two box streams are used at the same time when Scuttlebutt peers
+communicate. One is for client-to-server messages and the other is for
+server-to-client messages. The two streams use different keys and
+starting nonces for their secret boxes.</p>
+<figure>
+<img src="img/box_stream_params.png"
+alt="The secret box key is made of a double-sha256 hash of the network identifier and three shared secrets, followed by either the server’s permanent public key (for Client to Server) or the client’s permanent public key (for Server to Client), both hashed again with sha256. The starting nonces are respectively the first 24 bytes of server’s or the client’s ephemeral public key, hmac-authenticated with the network identifier." />
+<figcaption aria-hidden="true">The secret box key is made of a
+double-sha256 hash of the network identifier and three shared secrets,
+followed by either the server’s permanent public key (for Client to
+Server) or the client’s permanent public key (for Server to Client),
+both hashed again with sha256. The starting nonces are respectively the
+first 24 bytes of server’s or the client’s ephemeral public key,
+hmac-authenticated with the network identifier.</figcaption>
+</figure>
+<p>The starting nonce is used for the first header in the stream
+(“secret box 1” in the above figures), then incremented for the first
+body (“secret box 2”), then incremented for the next header and so
+on.</p>
+<h3 id="rpc-protocol">RPC protocol</h3>
+<p><img src="img/impl.png" /></p>
+<h5 id="implementations-2">Implementations</h5>
+<p>JS</p>
+<p><a
+href="https://github.com/ssbc/packet-stream-codec/blob/master/index.js">packet-stream-codec</a></p>
+<p>Py</p>
+<p><a
+href="https://github.com/pferreir/pyssb/blob/master/ssb/packet_stream.py">packet_stream.py</a></p>
+<p><a
+href="https://github.com/pferreir/pyssb/blob/master/ssb/muxrpc.py">muxrpc.py</a></p>
+<p>Go</p>
+<p><a
+href="https://github.com/cryptoscope/go-muxrpc/tree/601b7be81ee6b2bd6f32b1247e4688537f696794/codec">codec</a></p>
+<p><a
+href="https://github.com/cryptoscope/go-muxrpc/blob/601b7be81ee6b2bd6f32b1247e4688537f696794/rpc.go">rpc.go</a></p>
+<p>C</p>
+<p><a
+href="https://git.scuttlebot.io/%25133ulDgs%2FoC1DXjoK04vDFy6DgVBB%2FZok15YJmuhD5Q%3D.sha256/blob/fd953a1e72b4b16e6e5a74bcf2f893dbf1407ce4/sbotc.c">sbotc.c</a></p>
+<p>Java</p>
+<p><a
+href="https://github.com/apache/incubator-tuweni/blob/master/scuttlebutt-rpc/src/main/java/org/apache/tuweni/scuttlebutt/rpc/RPCCodec.java">RPCCodec</a></p>
+<p>Scuttlebutt peers make requests to each other using an RPC protocol.
+Typical requests include asking for the latest messages in a particular
+feed or requesting a blob.</p>
+<p>The RPC protocol can interleave multiple requests so that a slow
+request doesn’t block following ones. It also handles long-running
+asynchronous requests for notifying when an event occurs and streams
+that deliver multiple responses over time.</p>
+<p>Similar to the box stream protocol, the RPC protocol consists of
+9-bytes headers followed by variable-length bodies. There is also a
+9-bytes goodbye message which is just a zeroed out header.</p>
+<p><img src="img/rpc_overview.png" /></p>
+<p><strong>Remote procedure calls</strong> are where a computer exposes
+a set of procedures that another computer can call over the network.</p>
+<p>The requester tells the responder the name of the procedure they wish
+to call along with any arguments. The responder performs the action and
+returns a value back to the requester.</p>
+<p>Both peers make requests to each other at the same time using the
+pair of box streams that have been established. The box streams protect
+the RPC protocol from eavesdropping and tampering.</p>
+<p><img src="img/rpc_alignment.png" /></p>
+<p>RPC messages are not necessarily aligned to box stream boxes.</p>
+<p>Multiple RPC messages may be put inside one box or a single RPC
+message may be split over several boxes.</p>
+<h4 id="header-structure">Header structure</h4>
+<p>RPC headers contain a set of flags to say what type of message it is,
+a field specifying its length and a request number which allows matching
+requests with their responses when there are several active at the same
+time.</p>
+<figure>
+<img src="img/rpc_header.png"
+alt="Headers are made of (in network order): 4 zero bits, a stream bit (1 = ‘message is part of a stream’), a end/error bit (1 = ’message is the last in its stream or an error), and a 2-bits body type (00 = binary, 01 = UTF-8 string, 10 = JSON), the body length (4 bytes unsigned big-endian), and the request number (4 bytes signed big-endial)." />
+<figcaption aria-hidden="true">Headers are made of (in network order): 4
+zero bits, a stream bit (1 = ‘message is part of a stream’), a end/error
+bit (1 = ’message is the last in its stream or an error), and a 2-bits
+body type (00 = binary, 01 = UTF-8 string, 10 = JSON), the body length
+(4 bytes unsigned big-endian), and the request number (4 bytes signed
+big-endial).</figcaption>
+</figure>
+<h4 id="request-format">Request format</h4>
+<p>To make an RPC request, send a JSON message containing the name of
+the procedure you wish to call, the type of procedure and any
+arguments.</p>
+<p>The name is a list of strings. For a top-level procedure like
+<em>createHistoryStream</em> the list only has one element:
+<code>["createHistoryStream"]</code>. Procedures relating to blobs are
+grouped in the blobs namespace, for example to use <em>blobs.get</em>
+send the list: <code>["blobs", "get"]</code>.</p>
+<p>There are three types of procedure used when Scuttlebutt peers talk
+to each other:</p>
+<ul>
+<li><em>Source</em> procedures return multiple responses over time and
+are used for streaming data or continually notifying when new events
+occur. When making one of these requests, the stream flag in the RPC
+header must be set.</li>
+<li><em>Duplex</em> procedures are similar to <em>source</em> procedures
+but allow <em>multiple requests</em> as well as multiple responses over
+time. The many request events in a duplex utilize the same request
+number, and the stream flag must be set.</li>
+<li><em>Async</em> procedures return a single response. Async responses
+can arrive quickly or arrive much later in response to a one-off
+event.</li>
+</ul>
+<p>For each procedure in the RPC protocol you must already know whether
+it is source or async and correctly specify this in the request
+body.</p>
+<p>The reference Scuttlebot implementation also has other internal
+procedures and procedure types which are used by graphical user
+interfaces like Patchwork.</p>
+<p>This guide only covers the procedures that are publicly available to
+other Scuttlebutt peers.</p>
+<h4 id="source-example">Source example</h4>
+<p>This RPC message shows an example of a <em>createHistoryStream</em>
+request:</p>
+<p>JSON messages don’t have indentation or whitespace when sent over the
+wire.</p>
+<p>Request number1 Body typeJSON StreamYes End/errNo</p>
+<pre><code>{
+  &quot;name&quot;: [&quot;createHistoryStream&quot;],
+  &quot;type&quot;: &quot;source&quot;,
+  &quot;args&quot;: [{&quot;id&quot;: &quot;@FCX/tsDLpubCPKKfIrw4gc+SQkHcaD17s7GI6i/ziWY=.ed25519&quot;}]
+}</code></pre>
+<p><img src="img/arrow.png" /></p>
+<p><em>createHistoryStream</em> is how Scuttlebutt peers ask each other
+for a list of messages posted by a particular feed. It has one argument
+that is a JSON dictionary specifying more options about the request.
+<em>id</em> is the only required option and says which feed you are
+interested in.</p>
+<p>Because this is the first RPC request, the request number is 1. The
+next request made by this peer will be numbered 2. The other peer will
+also use request number 1 for their first request, but the peers can
+tell these apart because they know whether they sent or received each
+request.</p>
+<p>Now the responder begins streaming back responses:</p>
+<p><img src="img/arrow.png" /></p>
+<p>Request number-1 Body typeJSON StreamYes End/errNo</p>
+<pre><code>{
+  &quot;key&quot;: &quot;%XphMUkWQtomKjXQvFGfsGYpt69sgEY7Y4Vou9cEuJho=.sha256&quot;,
+  &quot;value&quot;: {
+    &quot;previous&quot;: null,
+    &quot;author&quot;: &quot;@FCX/tsDLpubCPKKfIrw4gc+SQkHcaD17s7GI6i/ziWY=.ed25519&quot;,
+    &quot;sequence&quot;: 1,
+    &quot;timestamp&quot;: 1514517067954,
+    &quot;hash&quot;: &quot;sha256&quot;,
+    &quot;content&quot;: {
+      &quot;type&quot;: &quot;post&quot;,
+      &quot;text&quot;: &quot;This is the first post!&quot;
+    },
+    &quot;signature&quot;: &quot;QYOR/zU9dxE1aKBaxc3C0DJ4gRyZtlMfPLt+CGJcY73sv5abKK
+                  Kxr1SqhOvnm8TY784VHE8kZHCD8RdzFl1tBA==.sig.ed25519&quot;
+  },
+  &quot;timestamp&quot;: 1514517067956
+}</code></pre>
+<p><img src="img/arrow.png" /></p>
+<p>Request number-1 Body typeJSON StreamYes End/errNo</p>
+<pre><code>{
+  &quot;key&quot;: &quot;%R7lJEkz27lNijPhYNDzYoPjM0Fp+bFWzwX0SmNJB/ZE=.sha256&quot;,
+  &quot;value&quot;: {
+    &quot;previous&quot;: &quot;%XphMUkWQtomKjXQvFGfsGYpt69sgEY7Y4Vou9cEuJho=.sha256&quot;,
+    &quot;author&quot;: &quot;@FCX/tsDLpubCPKKfIrw4gc+SQkHcaD17s7GI6i/ziWY=.ed25519&quot;,
+    &quot;sequence&quot;: 2,
+    &quot;timestamp&quot;: 1514517078157,
+    &quot;hash&quot;: &quot;sha256&quot;,
+    &quot;content&quot;: {
+      &quot;type&quot;: &quot;post&quot;,
+      &quot;text&quot;: &quot;Second post!&quot;
+    },
+    &quot;signature&quot;: &quot;z7W1ERg9UYZjNfE72ZwEuJF79khG+eOHWFp6iF+KLuSrw8Lqa6
+                  IousK4cCn9T5qFa8E14GVek4cAMmMbjqDnAg==.sig.ed25519&quot;
+  },
+  &quot;timestamp&quot;: 1514517078160
+}</code></pre>
+<p>Because the responses are part of a stream, their RPC headers have
+the stream flag set.</p>
+<p>All responses use the same request number as the original request but
+negative.</p>
+<p>Each message posted by the feed is sent back in its own response.
+This feed only contains two messages.</p>
+<p>To close the stream the responder sends an RPC message with both the
+stream and end/err flags set and a JSON body of <code>true</code>. When
+the requester sees that the stream is being closed they send a final
+message to close their own end of it (source type requests must always
+be closed by both ends).</p>
+<p><img src="img/arrow.png" /></p>
+<p>Request number-1 Body typeJSON StreamYes End/errYes</p>
+<pre><code>true</code></pre>
+<p>Request number1 Body typeJSON StreamYes End/errYes</p>
+<pre><code>true</code></pre>
+<p><img src="img/arrow.png" /></p>
+<p>Alternatively, to abort a stream before it is finished the requester
+can send their closing message early, at which point the responder
+closes their own end.</p>
+<p>Request number1 Body typeJSON StreamYes End/errYes</p>
+<pre><code>true</code></pre>
+<p><img src="img/arrow.png" /> <img src="img/arrow.png" /></p>
+<p>Request number-1 Body typeJSON StreamYes End/errYes</p>
+<pre><code>true</code></pre>
+<h4 id="async-example">Async example</h4>
+<p>One of the few public async procedures is <em>blobs.has</em>, which
+peers use to ask each other whether they have a particular blob.</p>
+<p>In this example the requester is asking the responder if they have
+blob <code>&amp;WWw4tQJ6…</code>:</p>
+<p>Request number2 Body typeJSON StreamNo End/errNo</p>
+<pre><code>{
+  &quot;name&quot;: [&quot;blobs&quot;, &quot;has&quot;],
+  &quot;type&quot;: &quot;async&quot;,
+  &quot;args&quot;: [&quot;&amp;WWw4tQJ6ZrM7o3gA8lOEAcO4zmyqXqb/3bmIKTLQepo=.sha256&quot;]
+}</code></pre>
+<p><img src="img/arrow.png" /></p>
+<p>The responder does in fact have this blob so they respond with
+<code>true</code>. Because this is an async procedure and not a stream,
+there is only one response and no need to close the stream
+afterwards:</p>
+<p><img src="img/arrow.png" /></p>
+<p>Request number-2 Body typeJSON StreamNo End/errNo</p>
+<pre><code>true</code></pre>
+<h4 id="error-example">Error example</h4>
+<p>Let’s take the previous example and introduce a programming mistake
+to see how the RPC protocol handles errors:</p>
+<p>Request number3 Body typeJSON StreamNo End/errNo</p>
+<pre><code>{
+  &quot;name&quot;: [&quot;blobs&quot;, &quot;has&quot;],
+  &quot;type&quot;: &quot;async&quot;,
+  &quot;args&quot;: [&quot;this was a mistake&quot;]
+}</code></pre>
+<p><img src="img/arrow.png" /> <img src="img/arrow.png" /></p>
+<p>Request number-3 Body typeJSON StreamNo End/errYes</p>
+<pre><code>{
+  &quot;name&quot;: &quot;Error&quot;,
+  &quot;message&quot;: &quot;invalid hash:this was a mistake&quot;,
+  &quot;stack&quot;: &quot;…&quot;
+}</code></pre>
+<p>Most importantly, the response has the end/err flag set to indicate
+that an error occurred. The reference Scuttlebot implementation also
+includes an error message and a JavaScript stack trace.</p>
+<p>For source type procedures an error will also end the stream because
+the end/err flag has the dual purpose of ending streams and indicating
+that an error occurred.</p>
+</article>
+</main>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="" data-theme="light">
+<head>
+  <meta name="company" content="appli" />
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>cryptography</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="/simple.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<main class="container">
+<aside>
+<div class="logo">
+  <img src="/icon96.png">
+</div>
+<nav id="TOC" role="doc-toc">
+<ul>
+<h1 class="toc-title">Protocol Guide</h1>
+<li><a class="toc-item" href="/protocol/introduction.html#introduction" id="toc-introduction">Introduction</a></li>
+<li><a class="toc-item" href="/protocol/cryptography.html#cryptography" id="toc-cryptography">Cryptography</a>
+<ul>
+<li><a class="toc-item" href="/protocol/cryptography.html#keys-and-identities" id="toc-keys-and-identities">Keys and
+identities</a></li>
+<li><a class="toc-item" href="/protocol/cryptography.html#cryptographic-primitives"
+id="toc-cryptographic-primitives">Cryptographic primitives</a></li>
+</ul></li>
+<li><a class="toc-item" href="/protocol/discovery.html#discovery" id="toc-discovery">Discovery</a>
+<ul>
+<li><a class="toc-item" href="/protocol/discovery.html#local-network" id="toc-local-network">Local
+network</a></li>
+<li><a class="toc-item" href="/protocol/discovery.html#invite-code" id="toc-invite-code">Invite code</a></li>
+<li><a class="toc-item" href="/protocol/discovery.html#pub-message" id="toc-pub-message">Pub message</a></li>
+</ul></li>
+<li><a class="toc-item" href="/protocol/peer_connections.html#peer-connections" id="toc-peer-connections">Peer
+connections</a>
+<ul>
+<li><a class="toc-item" href="/protocol/peer_connections.html#handshake" id="toc-handshake">Handshake</a></li>
+</ul></li>
+<h1 class="toc-title">Message Types</h1>
+<li><a class="toc-item" href="/message_types/index.html#message-types" id="toc-message-types">Message
+Types</a></li>
+<li><a class="toc-item" href="/message_types/about.html#about-messages" id="toc-about-messages"><code>about</code>
+messages</a></li>
+<li><a class="toc-item" href="/message_types/blog.html#blog-messages" id="toc-blog-messages"><code>blog</code>
+messages</a></li>
+<li><a class="toc-item" href="/message_types/bookclub.html#bookclub-message"
+id="toc-bookclub-message"><code>bookclub</code> message</a></li>
+<li><a class="toc-item" href="/message_types/bookclubUpdate.html#bookclubupdate-message"
+id="toc-bookclubupdate-message"><code>bookclubUpdate</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/channel.html#channel-message"
+id="toc-channel-message"><code>channel</code> message</a></li>
+<li><a class="toc-item" href="/message_types/contact.html#contact-message"
+id="toc-contact-message"><code>contact</code> message</a></li>
+<li><a class="toc-item" href="/message_types/gathering.html#gathering-message"
+id="toc-gathering-message"><code>gathering</code> message</a></li>
+<li><a class="toc-item" href="/message_types/more-info.html#more-info-message"
+id="toc-more-info-message"><code>more-info</code> message</a></li>
+<li><a class="toc-item" href="/message_types/post.html#post-message" id="toc-post-message"><code>post</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/private.html#private-messages" id="toc-private-messages">Private
+messages</a></li>
+<li><a class="toc-item" href="/message_types/pub.html#pub-message" id="toc-pub-message"><code>pub</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/vote.html#vote-message" id="toc-vote-message"><code>vote</code>
+message</a></li>
+</nav>
+<div class="aside-footer">
+<p>Build date: 2022-10-03</p>
+</div>
+</aside>
+<article>
+<h1 id="cryptography">Cryptography</h1>
+<h2 id="keys-and-identities">Keys and identities</h2>
+<p>The first thing a user needs to participate in Scuttlebutt is an
+identity. An identity is an Ed25519 key pair and typically represents a
+person, a device, a server or a bot. It’s normal for a person to have
+several Scuttlebutt identities.</p>
+<p>Upon starting for the first time, Scuttlebutt clients will
+automatically generate an Ed25519 key pair and save it in the user’s
+home folder under <code>.ssb/secret</code>.</p>
+<figure>
+<img src="img/identity_keypair.png"
+alt="The Scuttlebutt identity is a long-term Ed25519 key pair." />
+<figcaption aria-hidden="true">The Scuttlebutt identity is a long-term
+Ed25519 key pair.</figcaption>
+</figure>
+<p>Because identities are long and random, no coordination or permission
+is required to create a new one, which is essential to the network’s
+design.</p>
+<p>Later, a user can choose to give themselves a nickname or avatar to
+make themselves easier to refer to. Over time nicknames may change but
+identities stay the same. If a user loses their secret key or has it
+stolen they will need to generate a new identity and tell people to use
+their new one instead.</p>
+<p>The public key of an identity is presented to users and transmitted
+in some parts of the network protocol using this format:</p>
+<figure>
+<img src="img/format_public_key.png"
+alt="@FCX/tsDLpubCPKKfIrw4gc+SQkHcaD17s7GI6i/ziWY=.ed25519 where everything but the @ prefix and .ed25519 suffix is the public-key, base64-encoded." />
+<figcaption aria-hidden="true"><span class="citation"
+data-cites="FCX/tsDLpubCPKKfIrw4gc+SQkHcaD17s7GI6i/ziWY">@FCX/tsDLpubCPKKfIrw4gc+SQkHcaD17s7GI6i/ziWY</span>=.ed25519
+where everything but the @ prefix and .ed25519 suffix is the public-key,
+base64-encoded.</figcaption>
+</figure>
+<p>Throughout the protocol all instances of base64 are the variant that
+uses <code>+</code> and <code>/</code>. The final padding <code>=</code>
+is also required.</p>
+<p>The beginning <code>@</code> sign signifies that this represents a
+public key rather than a message or blob, which start with
+<code>%</code> and <code>&amp;</code>. Each identity has an associated
+<a class="toc-item" href="/protocol/cryptography.html#feeds">feed</a>, which is a list of all the messages posted by
+that identity. This is why the identity is also called a <em>feed
+ID</em>.</p>
+<h2 id="cryptographic-primitives">Cryptographic primitives</h2>
+<p>The Scuttlebutt protocol relies on NaCl/libsodium’s cryptobox
+primitives. This guide uses the following:</p>
+<p><code>nacl_scalarmult(n, p)</code></p>
+<p>This is <a
+href="https://doc.libsodium.org/advanced/scalar_multiplication">Libsodium’s
+scalar multiplication function</a>, which takes two scalars (usually
+public and/or secret keys). It has the useful property that, given two
+key pairs <code>(pk1, sk1)</code> and <code>(pk2, sk2)</code>,
+<code>nacl_scalarmult(sk1, pk2) == nacl_scalarmult(sk2, pk1)</code>,
+which allows shared secret derivation between peers who know each
+other’s public key. More on this later.</p>
+<p><code>nacl_auth(msg, key)</code> and
+<code>assert_nacl_auth_verify(authenticator, msg, key)</code></p>
+<p>This functions are <a
+href="https://doc.libsodium.org/public-key_cryptography/authenticated_encryption">Libsodium’s
+message authentication function</a>. The former takes a message and
+returns a 32-bytes authenticator, that acts as a detacted signature of
+the message. The latter verifies this authenticator is indeed valid for
+the given message and key; and errors if they don’t.</p>
+<p><code>nacl_secret_box(msg, nonce, key)</code> and
+<code>assert_nacl_secretbox_open(ciphertext, nonce, key)</code></p>
+<p>These function are based on <a
+href="https://doc.libsodium.org/secret-key_cryptography/secretbox">Libsodium’s
+crypto_secretbox_easy and crypto_secretbox_open_easy function</a>, which
+use symmetric cryptography to, respectively, encrypt+authenticate, and
+verify+decrypt a message using a nonce and a shared secret.</p>
+<p><code>nacl_sign_detached(msg, key)</code> and
+<code>assert_nacl_sign_verify_detached(sig, msg, key)</code></p>
+<p>The former is computed from <a
+href="https://doc.libsodium.org/public-key_cryptography/public-key_signatures">Libsodium’s
+signature functions</a>. Unlike the usual Libsodium/NaCl functions, they
+work with signatures in independent buffers, rather than concatenated
+with the msg.</p>
+<p><code>pk_to_curve25519(ed25519_pk)</code> and
+<code>sk_to_curve25519(ed25519_sk)</code></p>
+<p>These functions convert Ed25519 keys (used for cryptobox) to
+Curve25519 (aka X25519) keys, used for signing. They are <a
+href="https://doc.libsodium.org/advanced/ed25519-curve25519">implemented
+by Libsodium as <code>crypto_sign_ed25519_pk_to_curve25519</code> and
+<code>crypto_sign_ed25519_sk_to_curve25519</code></a>, respectively.</p>
+</article>
+</main>
+</body>
+</html>

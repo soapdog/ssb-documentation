@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="" data-theme="light">
+<head>
+  <meta name="company" content="appli" />
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>discovery</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="/simple.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<main class="container">
+<aside>
+<div class="logo">
+  <img src="/icon96.png">
+</div>
+<nav id="TOC" role="doc-toc">
+<ul>
+<h1 class="toc-title">Protocol Guide</h1>
+<li><a class="toc-item" href="/protocol/introduction.html#introduction" id="toc-introduction">Introduction</a></li>
+<li><a class="toc-item" href="/protocol/cryptography.html#cryptography" id="toc-cryptography">Cryptography</a>
+<ul>
+<li><a class="toc-item" href="/protocol/cryptography.html#keys-and-identities" id="toc-keys-and-identities">Keys and
+identities</a></li>
+<li><a class="toc-item" href="/protocol/cryptography.html#cryptographic-primitives"
+id="toc-cryptographic-primitives">Cryptographic primitives</a></li>
+</ul></li>
+<li><a class="toc-item" href="/protocol/discovery.html#discovery" id="toc-discovery">Discovery</a>
+<ul>
+<li><a class="toc-item" href="/protocol/discovery.html#local-network" id="toc-local-network">Local
+network</a></li>
+<li><a class="toc-item" href="/protocol/discovery.html#invite-code" id="toc-invite-code">Invite code</a></li>
+<li><a class="toc-item" href="/protocol/discovery.html#pub-message" id="toc-pub-message">Pub message</a></li>
+</ul></li>
+<li><a class="toc-item" href="/protocol/peer_connections.html#peer-connections" id="toc-peer-connections">Peer
+connections</a>
+<ul>
+<li><a class="toc-item" href="/protocol/peer_connections.html#handshake" id="toc-handshake">Handshake</a></li>
+</ul></li>
+<h1 class="toc-title">Message Types</h1>
+<li><a class="toc-item" href="/message_types/index.html#message-types" id="toc-message-types">Message
+Types</a></li>
+<li><a class="toc-item" href="/message_types/about.html#about-messages" id="toc-about-messages"><code>about</code>
+messages</a></li>
+<li><a class="toc-item" href="/message_types/blog.html#blog-messages" id="toc-blog-messages"><code>blog</code>
+messages</a></li>
+<li><a class="toc-item" href="/message_types/bookclub.html#bookclub-message"
+id="toc-bookclub-message"><code>bookclub</code> message</a></li>
+<li><a class="toc-item" href="/message_types/bookclubUpdate.html#bookclubupdate-message"
+id="toc-bookclubupdate-message"><code>bookclubUpdate</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/channel.html#channel-message"
+id="toc-channel-message"><code>channel</code> message</a></li>
+<li><a class="toc-item" href="/message_types/contact.html#contact-message"
+id="toc-contact-message"><code>contact</code> message</a></li>
+<li><a class="toc-item" href="/message_types/gathering.html#gathering-message"
+id="toc-gathering-message"><code>gathering</code> message</a></li>
+<li><a class="toc-item" href="/message_types/more-info.html#more-info-message"
+id="toc-more-info-message"><code>more-info</code> message</a></li>
+<li><a class="toc-item" href="/message_types/post.html#post-message" id="toc-post-message"><code>post</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/private.html#private-messages" id="toc-private-messages">Private
+messages</a></li>
+<li><a class="toc-item" href="/message_types/pub.html#pub-message" id="toc-pub-message"><code>pub</code>
+message</a></li>
+<li><a class="toc-item" href="/message_types/vote.html#vote-message" id="toc-vote-message"><code>vote</code>
+message</a></li>
+</nav>
+<div class="aside-footer">
+<p>Build date: 2022-10-03</p>
+</div>
+</aside>
+<article>
+<h1 id="discovery">Discovery</h1>
+<p>After a user has generated their identity they need to find some
+peers to connect to. To connect to a peer you need its public key and
+its address using any of the protocol it supports. Typically with
+TCP/IP, you would need its IP address and port, but the Scuttlebutt
+protocol is not restricted to TCP/IP as transport. The Scuttlebutt
+protocol currently has three methods for peers to discover each
+other.</p>
+<h2 id="local-network">Local network</h2>
+<p>Peers constantly broadcast UDP packets on their local network
+advertising their presence. The body of each packet is a string
+containing the peer’s IP address, port and base64-encoded public key
+(without <code>@</code> or <code>.ed25519</code>):</p>
+<blockquote>
+<h3 id="implementations"><img src="img/impl16.png" />
+Implementations</h3>
+<p><strong>JS:</strong></p>
+<ul>
+<li><a
+href="https://github.com/dominictarr/broadcast-stream/blob/master/index.js">broadcast-stream</a></li>
+<li><a
+href="https://github.com/ssbc/ssb-local/blob/master/index.js">ssb-local</a></li>
+</ul>
+<p><strong>Java:</strong></p>
+<ul>
+<li><a
+href="https://github.com/apache/incubator-tuweni/blob/master/scuttlebutt-discovery/src/main/java/org/apache/tuweni/scuttlebutt/discovery/ScuttlebuttLocalDiscoveryService.java">LocalDiscoveryService</a></li>
+</ul>
+</blockquote>
+<table>
+<thead>
+<tr class="header">
+<th>Source IP</th>
+<th>Source port</th>
+<th>Destination IP</th>
+<th>Destination port</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>192.168.1.123</td>
+<td>8008</td>
+<td>255.255.255.255</td>
+<td>8008</td>
+</tr>
+</tbody>
+</table>
+<figure>
+<img src="img/format_udp_broadcast.png"
+alt="net:192.168.1.123:8008:~shs:FCX/tsDLpubCPKKfIrw4gc+SQkHcaD17s7GI6i/ziWY=" />
+<figcaption
+aria-hidden="true">net:192.168.1.123:8008:~shs:FCX/tsDLpubCPKKfIrw4gc+SQkHcaD17s7GI6i/ziWY=</figcaption>
+</figure>
+<p>This message format can be any valid <a
+href="https://github.com/ssb-js/multiserver#address-format">multiserver
+address</a>. In local networks, this is usually a <code>net</code>
+address with an IPv4 or IPv6 address.</p>
+<p>Current implementations broadcast one of these packets every second.
+When a peer sees another peer’s broadcast packet they can connect to
+exchange messages. Some clients show nearby peers in the user interface
+so that the user can see other people on the same network as them.</p>
+<p>UDP source and destination ports are set to the same port number that
+the peer is listening on TCP for peer connections (normally 8008).</p>
+<h2 id="invite-code">Invite code</h2>
+<p><a class="toc-item" href="/protocol/discovery.html#invites">Invite codes</a> help new users get connected to
+their first <a class="toc-item" href="/protocol/discovery.html#pubs">pub</a>, which is a Scuttlebutt peer that is
+publicly accessible over the internet. An invite code contains a pub’s
+domain name, port and public key.</p>
+<p>They also contain a secret key that the user can <a
+class="toc-item" href="/protocol/discovery.html#redeeming-invites">redeem</a> to make the pub <a
+class="toc-item" href="/protocol/discovery.html#following">follow</a> them back. This lets the new user see
+messages posted by other members of the pub and share their own
+messages. Invite codes are the most common way for new users to get
+started on Scuttlebutt.</p>
+<p>Pub operators can distribute invite codes any way they see fit, for
+example by posting them on existing social networks. Some pubs have a
+web page that anybody can visit to generate an invite code.</p>
+<h2 id="pub-message">Pub message</h2>
+<p>Users can post a message to their own <a class="toc-item" href="/protocol/discovery.html#feeds">feed</a>
+advertising a pub:</p>
+<p>Here the user <code>@FCX/ts…</code> is advertising that they know of
+pub <code>@VJM7w1…</code> along with the pub’s domain name and port.</p>
+<pre><code>{
+  &quot;author&quot;: &quot;@FCX/tsDLpubCPKKfIrw4gc+SQkHcaD17s7GI6i/ziWY=.ed25519&quot;,
+  &quot;content&quot;: {
+    &quot;type&quot;: &quot;pub&quot;,
+    &quot;address&quot;: {
+      &quot;host&quot;: &quot;one.butt.nz&quot;,
+      &quot;port&quot;: 8008,
+      &quot;key&quot;: &quot;@VJM7w1W19ZsKmG2KnfaoKIM66BRoreEkzaVm/J//wl8=.ed25519&quot;
+    }
+  },
+  …
+}</code></pre>
+<p>When others see this message they can make a note that this pub
+exists and connect to it in the future.</p>
+<p>Pub messages are a useful way to find additional peers if you already
+know a few. Obviously this doesn’t work for new users who don’t know
+anyone else yet and therefore can’t see any pub messages.</p>
+</article>
+</main>
+</body>
+</html>

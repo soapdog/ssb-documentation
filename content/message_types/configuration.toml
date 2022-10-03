@@ -1,0 +1,18 @@
+title = "Message Types"
+toc_depth = 1
+
+files = [
+"README.md",
+"about.md",
+"blog.md",
+"bookclub.md",
+"bookclubUpdate.md",
+"channel.md",
+"contact.md",
+"gathering.md",
+"more-info.md",
+"post.md",
+"private.md",
+"pub.md",
+"vote.md",
+]
