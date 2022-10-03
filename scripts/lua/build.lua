@@ -29,14 +29,20 @@ table of contents depth.
 
 There is a lot of juggling in this script to handle the table of contents. 
 --]]
-for index, folder in pairs(rootConfiguration.folderOrder) do
-	if path.exists(F"content/{folder}/configuration.toml") then
-		local configuration = toml.parse(file.read(F"content/{folder}/configuration.toml"))
-		local files = tablex.imap(function(v) return "content/" .. folder .. "/"  .. v end, configuration.files)
+for index, fileOrFolder in pairs(rootConfiguration.files) do
+	if path.isdir(F"content/{fileOrFolder}") then 
+		if path.exists(F"content/{fileOrFolder}/configuration.toml") then
+			local configuration = toml.parse(file.read(F"content/{fileOrFolder}/configuration.toml"))
+			local files = tablex.imap(function(v) return "content/" .. fileOrFolder .. "/"  .. v end, configuration.files)
 
-		tablex.insertvalues(markdownFiles, files)
+			tablex.insertvalues(markdownFiles, files)
 
-		configurations[folder] = configuration
+			configurations[fileOrFolder] = configuration
+		end
+	end
+
+	if path.isfile(F"content/{fileOrFolder}") then
+		table.insert(markdownFiles, F"content/{fileOrFolder}")
 	end
 end
 
@@ -52,13 +58,19 @@ for index, f in pairs(markdownFiles) do
 	destination = destination:gsub("README.html", "index.html")
 	
 	local destinationPath = path.dirname(destination)
-	local toc_depth = configurations[destinationPath:gsub("docs/","")].toc_depth
+	local folder = destinationPath:gsub("docs/","")
+	local toc_depth = 1 
+
+	if folder ~= "docs" then 
+		toc_depth = configurations[folder].toc_depth
+	end
 		
-	if not path.exists(destinationPath) then
+	if destinationPath ~= "" and not path.exists(destinationPath) then
 		local ok, err, exitCode = os.execute(F"mkdir -p {destinationPath}")
 		
 		if not ok then
 			print(F"Error: {err}")
+			print(F"path: {destinationPath}")
 			os.exit(exitCode)
 		end
 	end
@@ -147,14 +159,6 @@ for index, f in pairs(markdownFiles) do
 	tablex.move(newContent, lines, #newContent+1, e)
 	
 	newContent = stringx.join("\n", newContent)
-
-	if options.verbose then
-		print "----[[ Table Of Contents ]]----"
-		pretty.dump(toc)
-		-- pretty.dump(newContent)
-		-- os.exit(1)
-		print "-------------------------------"
-	end
 	
 	local ok, err = file.write(F"{destination}", newContent)
 	
