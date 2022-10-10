@@ -218,3 +218,16 @@ pre code.sourceCode {
   white-space: -o-pre-wrap;
   word-wrap: break-word;
 }
+
+html {
+    scroll-behavior: smooth;
+}
+
+:target:before {
+    content: "";
+    display: block;
+    height: 30px;
+    margin: -30px 0 0;
+}
+
+
