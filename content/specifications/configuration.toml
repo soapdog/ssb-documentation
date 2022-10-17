@@ -2,5 +2,13 @@ title = "Specifications"
 toc_depth = 1
 
 files = [
-"README.md"
+"README.md",
+"bendy-butt-spec",
+"envelope-spec",
+"private-group-spec",
+"ssb-bfe-spec",
+"ssb-buttwoo-spec",
+"ssb-meta-feed-group-spec",
+"ssb-meta-feeds-spec",
+"ssb-uri-spec"
 ]
