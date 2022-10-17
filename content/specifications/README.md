@@ -1,5 +1,7 @@
 ---
 title: SSB Specifications
+
+dynamic: true
 ...
 
 # Relationship between specs {#index}
@@ -12,9 +14,9 @@ subgraph feedFormat [feed format]
   bendybutt
   buttwoo
 end
-click bendybutt "https://github.com/ssbc/bendy-butt-spec" " "
+click bendybutt "/specifications/bendy-butt-spec" " "
 click classic "https://ssbc.github.io/scuttlebutt-protocol-guide/#message-format" " "
-click buttwoo "https://github.com/ssbc/ssb-buttwoo-spec" " "
+click buttwoo "/specifications/ssb-buttwoo-spec" " "
 
 subgraph connection
   direction BT
@@ -46,19 +48,20 @@ uri -.-> bendybutt & buttwoo
 
 
 
-click uri "https://github.com/ssbc/ssb-uri-spec" " "
+click uri "/specifications/ssb-uri-spec" " "
 
 
-click bfe "https://github.com/ssbc/ssb-bfe-spec" " "
-click envelope "https://github.com/ssbc/envelope-spec" " "
-click private-group "https://github.com/ssbc/private-group-spec" " "
+click bfe "/specifications/ssb-bfe-spec" " "
+click envelope "/specifications/envelope-spec" " "
+click private-group "/specifications/private-group-spec" " "
 
 
-click meta-feeds "https://github.com/ssbc/ssb-meta-feeds-spec" " "
-click meta-feed-groups "https://github.com/ssbc/ssb-meta-feed-group-spec"
+click meta-feeds "/specifications/ssb-meta-feeds-spec" " "
+click meta-feed-groups "/specifications/ssb-meta-feed-group-spec"
 
 classDef node color:#fff, stroke:none, fill:#2F2440;
 classDef cluster color:#555, stroke:#BFD7ED, fill:#ffffff00;
 classDef noSpec color:#fff, fill:#BA0F30;
 classDef sunset color:#555, fill:#C6B79B;
 ```
+

@@ -29,8 +29,10 @@ function Image(el)
     end
     -- if the image is an SVG, inline it because clickevents only work if it is an inline SVG.
     if el.src:endswith ".svg" then
-      local svg = loadContent(old)
-      return pandoc.RawInline("html5", svg)
+      if io.open(old, "rb") ~= nil then
+        local svg = loadContent(old)
+        return pandoc.RawInline("html5", svg)
+      end
     end
   end
 

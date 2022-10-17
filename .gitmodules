@@ -1,0 +1,24 @@
+[submodule "content/specifications/ssb-uri-spec"]
+	path = content/specifications/ssb-uri-spec
+	url = https://github.com/ssbc/ssb-uri-spec.git
+[submodule "content/specifications/ssb-bfe-spec"]
+	path = content/specifications/ssb-bfe-spec
+	url = https://github.com/ssbc/ssb-bfe-spec.git
+[submodule "content/specifications/envelope-spec"]
+	path = content/specifications/envelope-spec
+	url = https://github.com/ssbc/envelope-spec.git
+[submodule "content/specifications/private-group-spec"]
+	path = content/specifications/private-group-spec
+	url = https://github.com/ssbc/private-group-spec.git
+[submodule "content/specifications/ssb-meta-feed-group-spec"]
+	path = content/specifications/ssb-meta-feed-group-spec
+	url = https://github.com/ssbc/ssb-meta-feed-group-spec.git
+[submodule "content/specifications/ssb-meta-feeds-spec"]
+	path = content/specifications/ssb-meta-feeds-spec
+	url = https://github.com/ssbc/ssb-meta-feeds-spec.git
+[submodule "content/specifications/bendy-butt-spec"]
+	path = content/specifications/bendy-butt-spec
+	url = https://github.com/ssbc/bendy-butt-spec.git
+[submodule "content/specifications/ssb-buttwoo-spec"]
+	path = content/specifications/ssb-buttwoo-spec
+	url = https://github.com/ssbc/ssb-buttwoo-spec.git

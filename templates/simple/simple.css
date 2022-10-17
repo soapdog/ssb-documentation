@@ -57,7 +57,7 @@ aside nav ul {
 }
 
 aside nav li {
-  color:  color: #9b9b9b;
+  color: #9b9b9b;
   list-style: none;
 }
 
@@ -68,9 +68,13 @@ aside nav li a {
   display: block;
   position: relative;
   font-size: 90%;
-  color: #black;
+  color: #000;
   text-decoration: none;
   cursor: pointer;
+}
+
+aside nav li a:visited {
+	color: #000;
 }
 
 aside nav li ul {

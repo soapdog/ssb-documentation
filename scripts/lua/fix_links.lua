@@ -26,6 +26,7 @@ function Link(el)
     if el.target:endswith ".md"  then
       -- local link
       el.target = el.target:gsub("README.md","index.html")
+      el.target = el.target:gsub("readme.md","index.html")
       el.target = el.target:gsub(".md",".html")
     end
   end
