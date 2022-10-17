@@ -1,6 +1,7 @@
 files = [
 "README.md",
 "protocol",
+"specifications",
 "message_types",
 "development/js",
 "development/rust",

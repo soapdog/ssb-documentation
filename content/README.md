@@ -8,4 +8,5 @@ Welcome to the SSB documentation. At the moment this is closed for renovations. 
 
 * [The Protocol Guide](protocol/introduction.md)
 * [Message Types](message_types/README.md)
+* [SSB Specifications](specifications/README.md)
 

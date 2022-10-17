@@ -32,7 +32,10 @@ $ ./scripts/lua/build.lua [--verbose]
 * [Pandoc](https://pandoc.org)
 * [Lua](https://lua.org)
 * [Luarocks](https://luarocks.org)
+* [Mermaid filter](https://github.com/raghur/mermaid-filter)
 
 Check out `scripts/install_dependencies.sh` to install Lua dependencies. **You need Lua 5.3 (or Lua 5.4).** This is not compatible with LuaJIT or Lua 5.1.
 
 Make sure you follow all the necessary steps to install and setup Luarocks.
+
+NodeJS is needed for the pandoc mermaid filters.

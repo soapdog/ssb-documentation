@@ -13,6 +13,11 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+env:
+  #CHROME_BIN: "/usr/bin/chromium-browser"
+  PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -24,6 +29,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      - uses: browser-actions/setup-chrome@latest
 
       # Runs a set of commands using the runners shell
       - name: Install dependencies
@@ -32,6 +38,7 @@ jobs:
           sudo apt-get install -y build-essential libreadline-dev unzip
           sudo apt-get install -y pandoc texlive-latex-base texlive-fonts-recommended texlive-extra-utils texlive-latex-extra texlive-xetex
           sudo apt-get install -y imagemagick
+          sudo apt-get install -y nodejs npm
           sudo apt-get install -y lua5.3 liblua5.3-dev 
           sudo update-alternatives --install /usr/bin/lua lua-interpreter /usr/bin/lua5.3 130 
           sudo update-alternatives --install /usr/bin/luac lua-compiler /usr/bin/luac5.3 130
@@ -40,6 +47,7 @@ jobs:
           sudo luarocks install lua-toml
           sudo luarocks install f-strings
           sudo luarocks install penlight
+          sudo npm install --global mermaid-filter
         shell: bash
       - name: Build HTML
         run: |

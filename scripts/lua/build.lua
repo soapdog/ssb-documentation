@@ -76,7 +76,7 @@ for index, f in pairs(markdownFiles) do
 	end
 	
 		
-	local cmd = F"pandoc  --lua-filter ./scripts/lua/fix_links.lua --template=./templates/simple/simple.html --css=simple.css -V current_date=\"$(date +%Y-%m-%d%n)\" --from markdown --toc --standalone --toc-depth={toc_depth} --to html5 --output {destination} {source}"
+	local cmd = F"pandoc  --lua-filter ./scripts/lua/fix_links.lua -F mermaid-filter --lua-filter ./scripts/lua/fix_svg.lua --template=./templates/simple/simple.html --css=simple.css -V current_date=\"$(date +%Y-%m-%d%n)\" --from markdown --toc --standalone --toc-depth={toc_depth} --to html5 --output {destination} {source}"
 	
 	if options.verbose then
 		print(cmd)
